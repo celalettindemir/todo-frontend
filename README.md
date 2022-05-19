@@ -1,28 +1,28 @@
-# Frontend
+# Todo Frontend
 
 ## Test
 
-npm run test:unit
-npm run coverage:unit
+- npm run test:unit
+- npm run coverage:unit
 
-Pact Path : pact/pacts/frontend-backend.json
+- Pact Path : pact/pacts/frontend-backend.json
 
 ## Run
 
-npm run serve
+- npm run serve
 
 ## Docker
 
-docker build -t celal258/modanisa-backend:v0.0.1 .
-docker push celal258/modanisa-backend:0.0.1
-docker run -p 8081:8081 celal258/modanisa-backend:v0.0.1
-docker tag local-image:tagname new-repo:tagname
+- docker build -t celal258/modanisa-backend:v0.0.1 .
+- docker push celal258/modanisa-backend:0.0.1
+- docker run -p 8081:8081 celal258/modanisa-backend:v0.0.1
+- docker tag local-image:tagname new-repo:tagname
 
-gcloud builds submit --tag "gcr.io/galvanic-sphinx-341912/celal258-modanisa-front:v0.2.0"
+- gcloud builds submit --tag "gcr.io/galvanic-sphinx-341912/celal258-modanisa-front:v0.2.0"
 
 ## Kubernetes
 
-kubectl apply -f deployment/frondend-deployment.yaml
+- kubectl apply -f deployment/frondend-deployment.yaml
 
 ## Environment
 
