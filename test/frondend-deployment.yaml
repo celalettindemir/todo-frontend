@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+data:
+  nginx.conf: |
+    upstream BackendTest {
+      server todo-test;
+    }
+    server {
+        listen 8081;
+        server_name frontend-test;
+        location / {
+        # This would be the directory where your React app's static files are stored at
+        root /usr/share/nginx/html;
+        try_files $uri /index.html;
+        }
+        
+        location /api {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-NginX-Proxy true;
+        proxy_pass http://BackendTest/api;
+        proxy_ssl_session_reuse off;
+        proxy_set_header Host $http_host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_redirect off;
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-test
+spec:
+  selector:
+    matchLabels:
+      app: todo-test
+      tier: frontend-test
+      track: stable
+  replicas: 1
+
+  template:
+    metadata:
+      labels:
+        app: todo-test
+        tier: frontend-test
+        track: stable
+    spec:
+      containers:
+        - name: nginx
+          image: "gcr.io/galvanic-sphinx-341912/celal258-modanisa-front:v0.2.6"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/usr/sbin/nginx","-s","quit"]
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: nginx.conf
+              readOnly: true
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf
+          items:
+            - key: nginx.conf
+              path: nginx.conf
